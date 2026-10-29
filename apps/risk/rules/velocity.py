@@ -47,3 +47,4 @@ class VelocityRule(BaseRiskRule):
             reason="Velocity is within normal limits.",
             metadata={'recent_transfers_count': recent_transfers_count}
         )
+

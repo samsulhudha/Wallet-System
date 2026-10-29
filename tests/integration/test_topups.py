@@ -61,3 +61,4 @@ def test_topup_failure_leaves_balance_untouched(client_a, wallet_a_inr):
     wallet_a_inr.refresh_from_db()
     assert wallet_a_inr.available_balance == 0
     assert LedgerEntry.objects.filter(account__wallet=wallet_a_inr).count() == 0
+

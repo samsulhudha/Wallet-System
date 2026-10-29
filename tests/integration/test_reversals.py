@@ -72,3 +72,4 @@ def test_reversal_rejected_when_recipient_has_insufficient_funds(admin_client, w
     )
     assert res.status_code == status.HTTP_400_BAD_REQUEST
     assert "insufficient available balance" in res.data['error']['message'].lower()
+

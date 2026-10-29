@@ -60,3 +60,4 @@ def test_late_callback_on_finalized_withdrawal(api_client, wallet_a_inr, user_a)
     res = api_client.post('/api/payments/callbacks/bank/', callback_payload, format='json', HTTP_X_BANK_SIGNATURE=sig)
     assert res.status_code == status.HTTP_200_OK
     assert "already finalized" in res.data['message'].lower()
+

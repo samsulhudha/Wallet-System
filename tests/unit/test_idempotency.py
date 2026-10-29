@@ -43,3 +43,4 @@ def test_idempotency_lifecycle(user_a):
     different_payload = {"source_wallet_id": 1, "destination_wallet_id": 2, "amount": "200.00"}
     with pytest.raises(IdempotencyConflictError, match="different request payload"):
         IdempotencyManager.acquire(user=user_a, key=key, endpoint=endpoint, payload=different_payload)
+

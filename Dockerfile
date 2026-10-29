@@ -25,3 +25,4 @@ EXPOSE 8000
 
 # Default command to run production WSGI application
 CMD ["gunicorn", "wallet_project.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--timeout", "60"]
+

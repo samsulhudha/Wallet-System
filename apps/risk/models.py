@@ -77,3 +77,4 @@ class RiskDecision(models.Model):
     @property
     def amount_decimal(self):
         return minor_units_to_decimal(self.amount, self.wallet.currency)
+

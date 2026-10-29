@@ -35,3 +35,4 @@ class BaseRiskRule(ABC):
         Must return RuleEvaluation with action ALLOW, FLAG, or BLOCK.
         """
         pass
+

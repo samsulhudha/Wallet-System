@@ -155,3 +155,4 @@ class RiskEngine:
                 details={'decision_id': decision.id, 'triggering_rules': decision.triggering_rule_ids}
             )
         return decision
+

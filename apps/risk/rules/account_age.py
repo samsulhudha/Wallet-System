@@ -42,3 +42,4 @@ class AccountAgeRule(BaseRiskRule):
             action=RiskAction.ALLOW,
             reason="Account age and transaction value within normal limits."
         )
+

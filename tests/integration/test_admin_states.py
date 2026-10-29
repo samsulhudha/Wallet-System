@@ -41,3 +41,4 @@ def test_admin_wallet_state_lifecycle(admin_client, client_a, wallet_a_inr, user
     )
     assert res_close_fail.status_code == status.HTTP_400_BAD_REQUEST
     assert "must be exactly zero" in res_close_fail.data['error']['message'].lower()
+

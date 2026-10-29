@@ -107,3 +107,4 @@ def test_frozen_source_wallet_cannot_transfer(client_a, wallet_a_inr, wallet_b_i
     res = client_a.post('/api/transfers/', payload, format='json', **headers)
     assert res.status_code == status.HTTP_400_BAD_REQUEST
     assert "frozen" in res.data['error']['message'].lower()
+

@@ -36,3 +36,4 @@ def test_wallet_object_permissions(client_a, client_b, admin_client, wallet_a_in
     # Admin can access
     res_admin = admin_client.get(f'/api/wallets/{wallet_a_inr.id}/')
     assert res_admin.status_code == status.HTTP_200_OK
+

@@ -109,3 +109,4 @@ def test_risk_engine_precedence(wallet_a_inr):
     decision = RiskEngine.evaluate(ctx)
     # New wallet high value triggers FLAG
     assert decision.decision in (RiskAction.FLAG, RiskAction.BLOCK)
+

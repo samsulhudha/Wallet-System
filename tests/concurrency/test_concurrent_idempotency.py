@@ -70,3 +70,4 @@ def test_concurrent_duplicate_idempotency_keys(wallet_a_inr, wallet_b_inr, user_
 
     assert wallet_a_inr.available_balance == 90000
     assert wallet_b_inr.available_balance == 10000
+

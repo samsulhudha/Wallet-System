@@ -50,3 +50,4 @@ class RapidWithdrawalAfterTopUpRule(BaseRiskRule):
             action=RiskAction.ALLOW,
             reason="No rapid withdrawal pattern detected."
         )
+

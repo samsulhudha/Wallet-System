@@ -73,3 +73,4 @@ def test_withdrawal_failure_refunds_reserved_balance(client_a, wallet_a_inr, use
     wallet_a_inr.refresh_from_db()
     assert wallet_a_inr.available_balance == 50000  # Refunded!
     assert wallet_a_inr.reserved_balance == 0
+

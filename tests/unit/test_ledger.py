@@ -101,3 +101,4 @@ def test_ledger_entry_immutability(wallet_a_inr):
     # Attempt deletion
     with pytest.raises(PermissionDenied, match="immutable and cannot be deleted"):
         entry.delete()
+

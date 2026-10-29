@@ -191,3 +191,4 @@ class BankCallbackLog(models.Model):
     class Meta:
         db_table = 'bank_callback_logs'
         ordering = ['-processed_at']
+

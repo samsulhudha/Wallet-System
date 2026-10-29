@@ -82,3 +82,4 @@ def format_money(minor_units: int, currency: str = 'INR') -> str:
     """Formats minor units to a human-readable string, e.g., '100.50 INR'."""
     dec = minor_units_to_decimal(minor_units, currency)
     return f"{dec:.2f} {currency.upper()}"
+

@@ -146,3 +146,4 @@ class WalletStateService:
 
         logger.info("Wallet #%s closed permanently by admin %s. Reason: %s", wallet.id, admin_user.username, reason)
         return wallet
+

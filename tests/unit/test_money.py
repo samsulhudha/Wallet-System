@@ -53,3 +53,4 @@ def test_disallow_exceeding_max_limit():
     huge_amount = (MAX_AMOUNT_MINOR_UNITS // 100) + 1
     with pytest.raises(MoneyValidationError, match="exceeds maximum allowed"):
         decimal_to_minor_units(str(huge_amount), "INR")
+

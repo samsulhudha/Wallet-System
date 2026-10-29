@@ -62,3 +62,4 @@ def test_concurrent_bank_callbacks(wallet_a_inr, user_a):
         transaction__transaction_type='WITHDRAWAL_SETTLE'
     )
     assert settle_entries.count() == 1
+

@@ -98,3 +98,4 @@ def wallet_a_usd(user_a):
 @pytest.fixture
 def make_idempotency_key():
     return lambda: str(uuid.uuid4())
+

@@ -128,3 +128,4 @@ class Command(BaseCommand):
                 f"Job #{job.id} for Withdrawal #{withdrawal.id} processed ({outcome}). Result: {msg}"
             )
         )
+

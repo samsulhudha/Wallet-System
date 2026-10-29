@@ -21,3 +21,4 @@ class RiskRuleConfigSerializer(serializers.ModelSerializer):
     class Meta:
         model = RiskRuleConfig
         fields = ('id', 'rule_id', 'name', 'is_enabled', 'parameters', 'description', 'updated_at')
+

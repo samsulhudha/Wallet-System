@@ -67,3 +67,4 @@ class AdminAuditLog(models.Model):
 
     def delete(self, *args, **kwargs):
         raise PermissionDenied("Admin audit logs are immutable and cannot be deleted.")
+

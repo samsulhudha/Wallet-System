@@ -27,3 +27,4 @@ class IsWalletOwnerOrAdmin(permissions.BasePermission):
             return True
         owner = getattr(obj, 'user', None) or getattr(obj, 'owner', None)
         return owner == request.user
+

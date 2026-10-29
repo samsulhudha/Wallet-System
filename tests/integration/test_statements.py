@@ -33,3 +33,4 @@ def test_statements_and_pagination(client_a, client_b, wallet_a_inr, wallet_b_in
     # 3. User B cannot view User A's statements
     res_unauth = client_b.get(f'/api/wallets/{wallet_a_inr.id}/transactions/')
     assert res_unauth.status_code == status.HTTP_403_FORBIDDEN
+

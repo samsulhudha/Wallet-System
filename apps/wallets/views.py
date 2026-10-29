@@ -78,13 +78,13 @@ class WalletTransactionsStatementView(generics.ListAPIView):
 
         start_date = self.request.query_params.get('start_date')
         if start_date:
-            parsed_start = parse_datetime(start_date)
+            parsed_start = parse_datetime(start_date.replace(' ', '+'))
             if parsed_start:
                 qs = qs.filter(transaction__posted_at__gte=parsed_start)
 
         end_date = self.request.query_params.get('end_date')
         if end_date:
-            parsed_end = parse_datetime(end_date)
+            parsed_end = parse_datetime(end_date.replace(' ', '+'))
             if parsed_end:
                 qs = qs.filter(transaction__posted_at__lte=parsed_end)
 

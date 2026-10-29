@@ -18,3 +18,4 @@ class AdminFlaggedDecisionsListView(generics.ListAPIView):
         return RiskDecision.objects.filter(
             decision__in=[RiskAction.FLAG, RiskAction.BLOCK]
         ).select_related('wallet', 'wallet__user').order_by('-created_at')
+

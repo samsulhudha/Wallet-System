@@ -69,3 +69,4 @@ def test_concurrent_freeze_and_outgoing_transfers(wallet_a_inr, wallet_b_inr, us
             currency="INR",
             user=user_a
         )
+
