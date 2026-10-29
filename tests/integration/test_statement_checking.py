@@ -146,3 +146,4 @@ def test_statement_filtering_by_date_and_type(client_a, wallet_a_inr, wallet_b_i
     res_window = client_a.get(f'/api/wallets/{wallet_a_inr.id}/transactions/?start_date={past_start}&end_date={future_end}')
     assert res_window.status_code == status.HTTP_200_OK
     assert len(res_window.data['results']) >= 2
+

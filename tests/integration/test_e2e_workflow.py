@@ -22,6 +22,16 @@ def test_full_e2e_customer_and_admin_lifecycle(admin_user):
     anon_client = APIClient()
 
     # --------------------------------------------------------------------------
+    # Step 0: Swagger / OpenAPI Verification
+    # --------------------------------------------------------------------------
+    schema_res = anon_client.get('/api/schema/')
+    assert schema_res.status_code == status.HTTP_200_OK
+
+    docs_res = anon_client.get('/api/docs/')
+    assert docs_res.status_code == status.HTTP_200_OK
+    assert b'swagger-ui' in docs_res.content.lower()
+
+    # --------------------------------------------------------------------------
     # Step 1: Customer Registration (Alice & Bob)
     # --------------------------------------------------------------------------
     alice_reg = anon_client.post('/api/auth/register/', {
@@ -56,6 +66,20 @@ def test_full_e2e_customer_and_admin_lifecycle(admin_user):
     }, format='json')
     assert bob_token_res.status_code == status.HTTP_200_OK
     bob_token = bob_token_res.data['access']
+    bob_refresh = bob_token_res.data['refresh']
+
+    # 2b. Verify JWT Refresh Endpoint
+    refresh_res = anon_client.post('/api/auth/token/refresh/', {
+        'refresh': bob_refresh
+    }, format='json')
+    assert refresh_res.status_code == status.HTTP_200_OK
+    assert 'access' in refresh_res.data
+    bob_token = refresh_res.data['access']  # Use the refreshed token!
+
+    # 2c. Verify Unauthenticated Rejection (No Token -> 401)
+    unauth_res = anon_client.get('/api/wallets/')
+    assert unauth_res.status_code == status.HTTP_401_UNAUTHORIZED
+    assert unauth_res.data['error']['code'] == 'AUTHENTICATION_FAILED'
 
     admin_token_res = anon_client.post('/api/auth/token/', {
         'username': admin_user.username,
