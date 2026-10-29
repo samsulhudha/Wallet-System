@@ -29,6 +29,12 @@ class WalletListCreateView(generics.ListCreateAPIView):
             return CreateWalletSerializer
         return WalletSerializer
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        wallet = serializer.save()
+        return Response(WalletSerializer(wallet).data, status=status.HTTP_201_CREATED)
+
     def get_queryset(self):
         if self.request.user.is_staff:
             return Wallet.objects.all().select_related('user').order_by('id')

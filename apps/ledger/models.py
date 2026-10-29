@@ -126,7 +126,7 @@ class LedgerEntry(models.Model):
         db_table = 'ledger_entries'
         constraints = [
             CheckConstraint(
-                check=Q(amount__gt=0),
+                condition=Q(amount__gt=0),
                 name='check_ledger_entry_amount_positive'
             ),
         ]

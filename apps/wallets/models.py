@@ -60,11 +60,11 @@ class Wallet(models.Model):
                 name='unique_user_currency_wallet'
             ),
             CheckConstraint(
-                check=Q(available_balance__gte=0),
+                condition=Q(available_balance__gte=0),
                 name='check_wallet_available_balance_non_negative'
             ),
             CheckConstraint(
-                check=Q(reserved_balance__gte=0),
+                condition=Q(reserved_balance__gte=0),
                 name='check_wallet_reserved_balance_non_negative'
             ),
         ]

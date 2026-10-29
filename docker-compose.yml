@@ -1,0 +1,71 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: wallet_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-wallet_db}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-wallet_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wallet_web
+    restart: unless-stopped
+    command: >
+      sh -c "python manage.py migrate &&
+             gunicorn wallet_project.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 60"
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - SECRET_KEY=${SECRET_KEY:-production-django-wallet-secret-key-2026-secure}
+      - DEBUG=${DEBUG:-False}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-*}
+      - DB_NAME=${DB_NAME:-wallet_db}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - DB_HOST=db
+      - DB_PORT=5432
+      - BANK_WEBHOOK_SECRET=${BANK_WEBHOOK_SECRET:-super-secret-bank-callback-key-2026}
+      - JWT_ACCESS_TOKEN_LIFETIME_MINUTES=60
+      - JWT_REFRESH_TOKEN_LIFETIME_DAYS=7
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wallet_withdrawal_worker
+    restart: unless-stopped
+    command: python manage.py process_withdrawals --interval 2.0
+    depends_on:
+      db:
+        condition: service_healthy
+      web:
+        condition: service_started
+    environment:
+      - SECRET_KEY=${SECRET_KEY:-production-django-wallet-secret-key-2026-secure}
+      - DEBUG=${DEBUG:-False}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-*}
+      - DB_NAME=${DB_NAME:-wallet_db}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - DB_HOST=db
+      - DB_PORT=5432
+      - BANK_WEBHOOK_SECRET=${BANK_WEBHOOK_SECRET:-super-secret-bank-callback-key-2026}
+
+volumes:
+  postgres_data:

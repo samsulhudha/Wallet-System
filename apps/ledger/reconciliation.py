@@ -98,6 +98,7 @@ class ReconciliationService:
     @classmethod
     def reconcile_wallet(cls, wallet: Wallet) -> WalletReconciliationReport:
         """Audits a single wallet against the ledger."""
+        wallet.refresh_from_db()
         balances = cls.calculate_wallet_ledger_balances(wallet)
         expected_available = balances['expected_available']
         expected_reserved = balances['expected_reserved']
