@@ -327,3 +327,5 @@ pytest tests/unit/ tests/integration/
 3. **Pessimistic Row Locking vs Optimistic Concurrency Control (OCC)**:
    - *Design Choice*: High-velocity money transfers exhibit high write contention on active wallets. Pessimistic row locking (`select_for_update`) prevents transaction retry storms and guarantees non-negative balances.
 
+Username: admin
+Password: AdminPassword123!
