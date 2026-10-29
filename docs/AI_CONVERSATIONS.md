@@ -121,3 +121,4 @@ This document records the AI pair-programming conversation history, prompt traje
   - 6 PostgreSQL Concurrency Tests (`test_concurrent_transfers`, `test_bidirectional_transfers`, `test_concurrent_velocity`, `test_concurrent_idempotency`, `test_concurrent_callbacks`, `test_concurrent_freeze`)
   - 3 Ledger Reconciliation Tests (`test_reconciliation`)
   - 3 E2E & Statement Audit Tests (`test_statement_checking`, `test_e2e_workflow`)
+
