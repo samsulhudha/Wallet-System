@@ -1,0 +1,1909 @@
+openapi: 3.0.3
+info:
+  title: Enterprise Wallet & Ledger Service API
+  version: 1.0.0
+  description: High-concurrency, double-entry financial wallet service featuring PostgreSQL
+    row-level locking, immutable double-entry ledger, idempotency protection, daily
+    limits, pluggable fraud engine, asynchronous mock banking with callback verification,
+    and complete audit trail.
+paths:
+  /admin/flags/:
+    get:
+      operationId: admin_flags_list
+      summary: List all flagged or blocked transactions requiring risk review
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Admin - Risk
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRiskDecisionList'
+          description: ''
+  /admin/risk/flagged/:
+    get:
+      operationId: admin_risk_flagged_list
+      summary: List all flagged or blocked transactions requiring risk review
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Admin - Risk
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRiskDecisionList'
+          description: ''
+  /admin/transfers/{id}/reverse/:
+    post:
+      operationId: admin_transfers_reverse_create
+      summary: Administratively reverse a completed transfer using compensating ledger
+        entries
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: Unique client idempotency token
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Admin - Reversals
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferReversalRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TransferReversalRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TransferReversalRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransferResponse'
+          description: ''
+        '400':
+          description: Transfer cannot be reversed or recipient has insufficient funds
+        '403':
+          description: Staff permission required
+  /admin/wallets/{id}/close/:
+    post:
+      operationId: admin_wallets_close_create
+      summary: Administratively permanently close a wallet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Admin - Wallets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StateChangeRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StateChangeRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StateChangeRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+          description: ''
+  /admin/wallets/{id}/freeze/:
+    post:
+      operationId: admin_wallets_freeze_create
+      summary: Administratively freeze a wallet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Admin - Wallets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StateChangeRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StateChangeRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StateChangeRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+          description: ''
+  /admin/wallets/{id}/unfreeze/:
+    post:
+      operationId: admin_wallets_unfreeze_create
+      summary: Administratively unfreeze a wallet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Admin - Wallets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StateChangeRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StateChangeRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StateChangeRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+          description: ''
+  /api/admin/flags/:
+    get:
+      operationId: api_admin_flags_list
+      summary: List all flagged or blocked transactions requiring risk review
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Admin - Risk
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRiskDecisionList'
+          description: ''
+  /api/admin/risk/flagged/:
+    get:
+      operationId: api_admin_risk_flagged_list
+      summary: List all flagged or blocked transactions requiring risk review
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Admin - Risk
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRiskDecisionList'
+          description: ''
+  /api/admin/transfers/{id}/reverse/:
+    post:
+      operationId: api_admin_transfers_reverse_create
+      summary: Administratively reverse a completed transfer using compensating ledger
+        entries
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: Unique client idempotency token
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Admin - Reversals
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferReversalRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TransferReversalRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TransferReversalRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransferResponse'
+          description: ''
+        '400':
+          description: Transfer cannot be reversed or recipient has insufficient funds
+        '403':
+          description: Staff permission required
+  /api/admin/wallets/{id}/close/:
+    post:
+      operationId: api_admin_wallets_close_create
+      summary: Administratively permanently close a wallet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Admin - Wallets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StateChangeRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StateChangeRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StateChangeRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+          description: ''
+  /api/admin/wallets/{id}/freeze/:
+    post:
+      operationId: api_admin_wallets_freeze_create
+      summary: Administratively freeze a wallet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Admin - Wallets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StateChangeRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StateChangeRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StateChangeRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+          description: ''
+  /api/admin/wallets/{id}/unfreeze/:
+    post:
+      operationId: api_admin_wallets_unfreeze_create
+      summary: Administratively unfreeze a wallet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Admin - Wallets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StateChangeRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StateChangeRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StateChangeRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+          description: ''
+  /api/auth/me/:
+    get:
+      operationId: api_auth_me_retrieve
+      summary: Retrieve current authenticated user profile
+      tags:
+      - Accounts
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+  /api/auth/register/:
+    post:
+      operationId: api_auth_register_create
+      summary: Register a new customer account
+      tags:
+      - Accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistrationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRegistrationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRegistrationRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+        '400':
+          description: Validation error
+  /api/auth/token/:
+    post:
+      operationId: api_auth_token_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /api/auth/token/refresh/:
+    post:
+      operationId: api_auth_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/payments/callbacks/bank/:
+    post:
+      operationId: api_payments_callbacks_bank_create
+      summary: Dedicated mock bank callback webhook endpoint
+      parameters:
+      - in: header
+        name: X-Bank-Signature
+        schema:
+          type: string
+        description: HMAC SHA-256 signature of JSON payload
+        required: true
+      tags:
+      - Withdrawals
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankCallbackPayloadRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BankCallbackPayloadRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BankCallbackPayloadRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Callback processed or duplicate ignored
+        '400':
+          description: Invalid signature or malformed payload
+  /api/transfers/:
+    post:
+      operationId: api_transfers_create
+      summary: Execute an atomic P2P transfer between two wallets (Requires Idempotency-Key
+        header)
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: Unique client idempotency token
+        required: true
+      tags:
+      - Transfers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TransferRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TransferRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransferResponse'
+          description: ''
+        '400':
+          description: Insufficient balance, daily limit exceeded, or validation error
+        '403':
+          description: Fraud risk rule blocked transfer
+        '409':
+          description: Idempotency key collision with different payload
+  /api/wallets/:
+    get:
+      operationId: api_wallets_list
+      summary: List wallets or create a new currency wallet
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Wallets
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedWalletList'
+          description: ''
+    post:
+      operationId: api_wallets_create
+      summary: List wallets or create a new currency wallet
+      tags:
+      - Wallets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWalletRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateWalletRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateWalletRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateWallet'
+          description: ''
+  /api/wallets/{id}/:
+    get:
+      operationId: api_wallets_retrieve
+      summary: Retrieve authorized wallet balance and status
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Wallets
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+          description: ''
+  /api/wallets/{id}/topups/:
+    post:
+      operationId: api_wallets_topups_create
+      summary: Fund a wallet via mock payment gateway (Requires Idempotency-Key header)
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: Unique client idempotency token
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Top-ups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopUpRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TopUpRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TopUpRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopUpResponse'
+          description: ''
+        '400':
+          description: Validation error or wallet closed
+        '409':
+          description: Idempotency conflict
+  /api/wallets/{id}/transactions/:
+    get:
+      operationId: api_wallets_transactions_list
+      summary: Retrieve ledger-backed transaction statement for a wallet
+      parameters:
+      - in: query
+        name: end_date
+        schema:
+          type: string
+        description: Filter to ISO datetime
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: start_date
+        schema:
+          type: string
+        description: Filter from ISO datetime
+      - in: query
+        name: transaction_type
+        schema:
+          type: string
+        description: Filter by transaction type (TOPUP, TRANSFER, etc.)
+      tags:
+      - Statements
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLedgerStatementEntryList'
+          description: ''
+  /api/wallets/{id}/withdrawals/:
+    post:
+      operationId: api_wallets_withdrawals_create
+      summary: Initiate an asynchronous bank withdrawal (Requires Idempotency-Key
+        header)
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: Unique client idempotency token
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Withdrawals
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WithdrawalRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WithdrawalRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WithdrawalRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WithdrawalResponse'
+          description: ''
+        '400':
+          description: Insufficient funds or invalid state
+        '409':
+          description: Idempotency conflict
+  /api/withdrawals/{id}/:
+    get:
+      operationId: api_withdrawals_retrieve
+      summary: Retrieve current status of a withdrawal resource
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Withdrawals
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WithdrawalResponse'
+          description: ''
+  /payments/callbacks/bank/:
+    post:
+      operationId: payments_callbacks_bank_create
+      summary: Dedicated mock bank callback webhook endpoint
+      parameters:
+      - in: header
+        name: X-Bank-Signature
+        schema:
+          type: string
+        description: HMAC SHA-256 signature of JSON payload
+        required: true
+      tags:
+      - Withdrawals
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankCallbackPayloadRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BankCallbackPayloadRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BankCallbackPayloadRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Callback processed or duplicate ignored
+        '400':
+          description: Invalid signature or malformed payload
+  /transfers/:
+    post:
+      operationId: transfers_create
+      summary: Execute an atomic P2P transfer between two wallets (Requires Idempotency-Key
+        header)
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: Unique client idempotency token
+        required: true
+      tags:
+      - Transfers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TransferRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TransferRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransferResponse'
+          description: ''
+        '400':
+          description: Insufficient balance, daily limit exceeded, or validation error
+        '403':
+          description: Fraud risk rule blocked transfer
+        '409':
+          description: Idempotency key collision with different payload
+  /wallets/:
+    get:
+      operationId: wallets_list
+      summary: List wallets or create a new currency wallet
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Wallets
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedWalletList'
+          description: ''
+    post:
+      operationId: wallets_create
+      summary: List wallets or create a new currency wallet
+      tags:
+      - Wallets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWalletRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateWalletRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateWalletRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateWallet'
+          description: ''
+  /wallets/{id}/:
+    get:
+      operationId: wallets_retrieve
+      summary: Retrieve authorized wallet balance and status
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Wallets
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Wallet'
+          description: ''
+  /wallets/{id}/topups/:
+    post:
+      operationId: wallets_topups_create
+      summary: Fund a wallet via mock payment gateway (Requires Idempotency-Key header)
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: Unique client idempotency token
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Top-ups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopUpRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TopUpRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TopUpRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopUpResponse'
+          description: ''
+        '400':
+          description: Validation error or wallet closed
+        '409':
+          description: Idempotency conflict
+  /wallets/{id}/transactions/:
+    get:
+      operationId: wallets_transactions_list
+      summary: Retrieve ledger-backed transaction statement for a wallet
+      parameters:
+      - in: query
+        name: end_date
+        schema:
+          type: string
+        description: Filter to ISO datetime
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: start_date
+        schema:
+          type: string
+        description: Filter from ISO datetime
+      - in: query
+        name: transaction_type
+        schema:
+          type: string
+        description: Filter by transaction type (TOPUP, TRANSFER, etc.)
+      tags:
+      - Statements
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLedgerStatementEntryList'
+          description: ''
+  /wallets/{id}/withdrawals/:
+    post:
+      operationId: wallets_withdrawals_create
+      summary: Initiate an asynchronous bank withdrawal (Requires Idempotency-Key
+        header)
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: Unique client idempotency token
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Withdrawals
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WithdrawalRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WithdrawalRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WithdrawalRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WithdrawalResponse'
+          description: ''
+        '400':
+          description: Insufficient funds or invalid state
+        '409':
+          description: Idempotency conflict
+  /withdrawals/{id}/:
+    get:
+      operationId: withdrawals_retrieve
+      summary: Retrieve current status of a withdrawal resource
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Withdrawals
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WithdrawalResponse'
+          description: ''
+components:
+  schemas:
+    BankCallbackPayloadRequest:
+      type: object
+      properties:
+        provider_event_id:
+          type: string
+          minLength: 1
+          description: Unique event token from bank
+        provider_reference:
+          type: string
+          minLength: 1
+          description: Withdrawal transaction provider reference
+        event_type:
+          $ref: '#/components/schemas/EventTypeEnum'
+        amount:
+          type: integer
+        currency:
+          type: string
+          minLength: 1
+        failure_reason:
+          type: string
+          default: ''
+      required:
+      - event_type
+      - provider_event_id
+      - provider_reference
+    CreateWallet:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        currency:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyEnum'
+          default: INR
+        daily_limit:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          nullable: true
+          description: Custom daily outgoing limit in minor units (paise). If null,
+            system default applies.
+      required:
+      - id
+    CreateWalletRequest:
+      type: object
+      properties:
+        currency:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyEnum'
+          default: INR
+        daily_limit:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          nullable: true
+          description: Custom daily outgoing limit in minor units (paise). If null,
+            system default applies.
+    CurrencyEnum:
+      enum:
+      - EUR
+      - GBP
+      - INR
+      - USD
+      type: string
+      description: |-
+        * `EUR` - EUR
+        * `GBP` - GBP
+        * `INR` - INR
+        * `USD` - USD
+    DecisionEnum:
+      enum:
+      - ALLOW
+      - FLAG
+      - BLOCK
+      type: string
+      description: |-
+        * `ALLOW` - Allow
+        * `FLAG` - Flag (Manual Review)
+        * `BLOCK` - Block (Rejected)
+    DirectionEnum:
+      enum:
+      - DEBIT
+      - CREDIT
+      type: string
+      description: |-
+        * `DEBIT` - Debit
+        * `CREDIT` - Credit
+    EventTypeEnum:
+      enum:
+      - PAYOUT_COMPLETED
+      - PAYOUT_REJECTED
+      type: string
+      description: |-
+        * `PAYOUT_COMPLETED` - PAYOUT_COMPLETED
+        * `PAYOUT_REJECTED` - PAYOUT_REJECTED
+    LedgerStatementEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        transaction_id:
+          type: integer
+          readOnly: true
+        reference_id:
+          type: string
+          readOnly: true
+        transaction_type:
+          type: string
+          readOnly: true
+        account_type:
+          type: string
+          readOnly: true
+        direction:
+          $ref: '#/components/schemas/DirectionEnum'
+        amount:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          description: Positive amount in minor units (e.g. paise)
+        amount_decimal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,16}(?:\.\d{0,2})?$
+          readOnly: true
+        currency:
+          type: string
+          readOnly: true
+        description:
+          type: string
+          readOnly: true
+        posted_at:
+          type: string
+          format: date-time
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - account_type
+      - amount
+      - amount_decimal
+      - created_at
+      - currency
+      - description
+      - direction
+      - id
+      - posted_at
+      - reference_id
+      - transaction_id
+      - transaction_type
+    MockProviderOutcomeEnum:
+      enum:
+      - SUCCESS
+      - FAILURE
+      type: string
+      description: |-
+        * `SUCCESS` - SUCCESS
+        * `FAILURE` - FAILURE
+    PaginatedLedgerStatementEntryList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/LedgerStatementEntry'
+    PaginatedRiskDecisionList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/RiskDecision'
+    PaginatedWalletList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Wallet'
+    RiskDecision:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        wallet:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+        currency:
+          type: string
+          readOnly: true
+        operation_type:
+          type: string
+          readOnly: true
+        amount:
+          type: integer
+          readOnly: true
+          description: Operation amount in minor units
+        amount_decimal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,16}(?:\.\d{0,2})?$
+          readOnly: true
+        decision:
+          allOf:
+          - $ref: '#/components/schemas/DecisionEnum'
+          readOnly: true
+        triggering_rule_ids:
+          readOnly: true
+          description: List of rule IDs that triggered FLAG or BLOCK
+        rule_evaluations:
+          readOnly: true
+          description: Detailed breakdown of all evaluated rules and reasons
+        context_data:
+          readOnly: true
+        is_reviewed:
+          type: boolean
+          readOnly: true
+        reviewed_by:
+          type: integer
+          readOnly: true
+          nullable: true
+        review_notes:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - amount
+      - amount_decimal
+      - context_data
+      - created_at
+      - currency
+      - decision
+      - id
+      - is_reviewed
+      - operation_type
+      - review_notes
+      - reviewed_by
+      - rule_evaluations
+      - triggering_rule_ids
+      - username
+      - wallet
+    SimulatedOutcomeEnum:
+      enum:
+      - SUCCESS
+      - REJECTION
+      - TIMEOUT
+      type: string
+      description: |-
+        * `SUCCESS` - SUCCESS
+        * `REJECTION` - REJECTION
+        * `TIMEOUT` - TIMEOUT
+    StateChangeRequestRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          minLength: 3
+          description: Mandatory reason for state transition
+      required:
+      - reason
+    StateEnum:
+      enum:
+      - ACTIVE
+      - FROZEN
+      - CLOSED
+      type: string
+      description: |-
+        * `ACTIVE` - Active
+        * `FROZEN` - Frozen
+        * `CLOSED` - Closed
+    TokenObtainPair:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - refresh
+    TokenObtainPairRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+          minLength: 1
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - password
+      - username
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+    TokenRefreshRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          minLength: 1
+      required:
+      - refresh
+    TopUpRequestRequest:
+      type: object
+      properties:
+        amount:
+          type: string
+          minLength: 1
+          description: Amount in standard currency decimal string, e.g. '100.00'
+        currency:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyEnum'
+          default: INR
+        mock_provider_outcome:
+          allOf:
+          - $ref: '#/components/schemas/MockProviderOutcomeEnum'
+          default: SUCCESS
+      required:
+      - amount
+    TopUpResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        wallet:
+          type: integer
+        amount:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          description: Top-up amount in minor units
+        amount_decimal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,16}(?:\.\d{0,2})?$
+          readOnly: true
+        currency:
+          type: string
+          maxLength: 3
+        provider_reference:
+          type: string
+          maxLength: 128
+        status:
+          $ref: '#/components/schemas/TopUpResponseStatusEnum'
+        error_message:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - amount
+      - amount_decimal
+      - created_at
+      - currency
+      - id
+      - provider_reference
+      - wallet
+    TopUpResponseStatusEnum:
+      enum:
+      - PENDING
+      - COMPLETED
+      - FAILED
+      type: string
+      description: |-
+        * `PENDING` - Pending
+        * `COMPLETED` - Completed
+        * `FAILED` - Failed
+    TransferRequestRequest:
+      type: object
+      properties:
+        source_wallet_id:
+          type: integer
+        destination_wallet_id:
+          type: integer
+        amount:
+          type: string
+          minLength: 1
+          description: Amount in decimal string format, e.g. '100.00'
+        currency:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyEnum'
+          default: INR
+        description:
+          type: string
+          default: ''
+      required:
+      - amount
+      - destination_wallet_id
+      - source_wallet_id
+    TransferResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        source_wallet:
+          type: integer
+        destination_wallet:
+          type: integer
+        amount:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          description: Transfer amount in minor units
+        amount_decimal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,16}(?:\.\d{0,2})?$
+          readOnly: true
+        currency:
+          type: string
+          maxLength: 3
+        status:
+          $ref: '#/components/schemas/TransferResponseStatusEnum'
+        is_reversed:
+          type: boolean
+        description:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - amount
+      - amount_decimal
+      - created_at
+      - currency
+      - destination_wallet
+      - id
+      - source_wallet
+    TransferResponseStatusEnum:
+      enum:
+      - COMPLETED
+      - REVERSED
+      type: string
+      description: |-
+        * `COMPLETED` - Completed
+        * `REVERSED` - Reversed
+    TransferReversalRequestRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          minLength: 3
+          description: Mandatory reason for transfer reversal
+      required:
+      - reason
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        email:
+          type: string
+          format: email
+          readOnly: true
+        first_name:
+          type: string
+          readOnly: true
+        last_name:
+          type: string
+          readOnly: true
+        is_staff:
+          type: boolean
+          readOnly: true
+          title: Staff status
+          description: Designates whether the user can log into this admin site.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - email
+      - first_name
+      - id
+      - is_staff
+      - last_name
+      - username
+    UserRegistrationRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+        password_confirm:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - email
+      - password
+      - password_confirm
+      - username
+    Wallet:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        owner_username:
+          type: string
+          readOnly: true
+        currency:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyEnum'
+          description: |-
+            ISO 4217 Currency Code
+
+            * `EUR` - EUR
+            * `GBP` - GBP
+            * `INR` - INR
+            * `USD` - USD
+        state:
+          allOf:
+          - $ref: '#/components/schemas/StateEnum'
+          readOnly: true
+          description: |-
+            Operational state of wallet
+
+            * `ACTIVE` - Active
+            * `FROZEN` - Frozen
+            * `CLOSED` - Closed
+        available_balance:
+          type: integer
+          readOnly: true
+          description: Funds immediately available for transfer or withdrawal (in
+            minor units)
+        available_balance_decimal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,16}(?:\.\d{0,2})?$
+          readOnly: true
+        reserved_balance:
+          type: integer
+          readOnly: true
+          description: Funds locked pending settlement or bank callback (in minor
+            units)
+        reserved_balance_decimal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,16}(?:\.\d{0,2})?$
+          readOnly: true
+        total_balance_decimal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,16}(?:\.\d{0,2})?$
+          readOnly: true
+        daily_limit:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          nullable: true
+          description: Custom daily outgoing limit in minor units (paise). If null,
+            system default applies.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - available_balance
+      - available_balance_decimal
+      - created_at
+      - id
+      - owner_username
+      - reserved_balance
+      - reserved_balance_decimal
+      - state
+      - total_balance_decimal
+      - updated_at
+    WithdrawalRequestRequest:
+      type: object
+      properties:
+        amount:
+          type: string
+          minLength: 1
+          description: Amount in decimal format, e.g. '50.00'
+        currency:
+          allOf:
+          - $ref: '#/components/schemas/CurrencyEnum'
+          default: INR
+        bank_account_info:
+          type: string
+          default: ''
+        simulated_outcome:
+          allOf:
+          - $ref: '#/components/schemas/SimulatedOutcomeEnum'
+          default: SUCCESS
+          description: |-
+            Configurable outcome for mock bank integration
+
+            * `SUCCESS` - SUCCESS
+            * `REJECTION` - REJECTION
+            * `TIMEOUT` - TIMEOUT
+      required:
+      - amount
+    WithdrawalResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        wallet:
+          type: integer
+        amount:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+          description: Withdrawal amount in minor units
+        amount_decimal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,16}(?:\.\d{0,2})?$
+          readOnly: true
+        currency:
+          type: string
+          maxLength: 3
+        provider_reference:
+          type: string
+          maxLength: 128
+        status:
+          $ref: '#/components/schemas/WithdrawalResponseStatusEnum'
+        bank_account_info:
+          type: string
+          maxLength: 255
+        failure_reason:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - amount
+      - amount_decimal
+      - created_at
+      - currency
+      - id
+      - provider_reference
+      - updated_at
+      - wallet
+    WithdrawalResponseStatusEnum:
+      enum:
+      - REQUESTED
+      - PROCESSING
+      - COMPLETED
+      - FAILED
+      type: string
+      description: |-
+        * `REQUESTED` - Requested
+        * `PROCESSING` - Processing
+        * `COMPLETED` - Completed
+        * `FAILED` - Failed
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+tags:
+- name: Accounts
+  description: Authentication and user management
+- name: Wallets
+  description: Customer wallet lifecycle and balance retrieval
+- name: Transfers
+  description: P2P wallet-to-wallet transfers with row-level locking
+- name: Top-ups
+  description: Wallet funding via payment gateway
+- name: Withdrawals
+  description: Asynchronous withdrawal state machine and bank callbacks
+- name: Statements
+  description: Ledger-backed transaction statements and export
+- name: Admin - Wallets
+  description: Administrative freeze, unfreeze, and closure operations
+- name: Admin - Reversals
+  description: Compensating ledger reversal of completed transfers
+- name: Admin - Risk
+  description: Fraud engine decisions and flagged transaction inspection
