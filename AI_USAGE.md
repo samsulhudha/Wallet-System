@@ -51,3 +51,4 @@ Every AI proposal underwent senior-level engineering scrutiny:
 4. **Outbox Pattern over Celery**: Mandated PostgreSQL transactional outbox to eliminate distributed dual-write failure modes.
 
 The complete chronological conversation transcript is preserved in [`docs/AI_CONVERSATIONS.md`](docs/AI_CONVERSATIONS.md).
+

@@ -128,3 +128,4 @@ tests/
 
 1. **Queue Scaling**: The PostgreSQL outbox table with `SELECT ... FOR UPDATE SKIP LOCKED` easily handles thousands of payouts per minute with zero broker overhead. For hyperscale enterprise volumes exceeding 50,000 tx/sec, moving to Apache Kafka with Debezium Change Data Capture (CDC) is recommended.
 2. **Mock Bank Latency**: The mock banking service simulates asynchronous callbacks with immediate in-memory signatures. In production, webhooks should be guarded behind an API gateway with rate-limiting.
+

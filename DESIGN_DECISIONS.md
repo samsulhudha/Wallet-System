@@ -125,3 +125,4 @@ Enforced by a database unique constraint on `IdempotencyRecord`.
 ### Ambiguous Timeout Handling
 - If the mock bank times out during dispatch, the withdrawal job enters an exponential backoff retry cycle.
 - **Crucial Rule**: **Funds are NEVER refunded automatically after a timeout**. An ambiguous timeout means the bank may still process the payout. Auto-refunding could cause a double payout if the bank later settles. Only confirmed failure webhooks (`PAYOUT_REJECTED`) trigger compensating refunds.
+

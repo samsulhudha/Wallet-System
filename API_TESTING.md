@@ -323,3 +323,4 @@ Occurs when User A attempts to view or withdraw from User B's wallet:
   }
 }
 ```
+
