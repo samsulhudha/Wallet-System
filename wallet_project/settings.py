@@ -162,6 +162,20 @@ SPECTACULAR_SETTINGS = {
         {'name': 'Admin - Reversals', 'description': 'Compensating ledger reversal of completed transfers'},
         {'name': 'Admin - Risk', 'description': 'Fraud engine decisions and flagged transaction inspection'},
     ],
+    # Redoc CDN distribution and UI configuration (pins to stable 2.x to avoid Redocly 3.x white-screen bug)
+    'REDOC_DIST': 'https://cdn.jsdelivr.net/npm/redoc@2.1.5',
+    'REDOC_UI_SETTINGS': {
+        'scrollYOffset': 50,
+        'hideDownloadButton': False,
+        'expandResponses': 'all',
+        'theme': {
+            'colors': {
+                'primary': {
+                    'main': '#4f46e5'
+                }
+            }
+        }
+    },
 }
 
 # Bank Integration Secrets & Configuration
