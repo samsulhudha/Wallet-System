@@ -1,0 +1,304 @@
+{
+  "info": {
+    "name": "Enterprise Wallet Service API",
+    "_postman_id": "c88b0a99-ff1e-42fb-8c01-1f068b7f3a40",
+    "description": "Comprehensive Postman collection for Enterprise Wallet Service featuring JWT authentication, Idempotency keys, Double-entry ledgers, and Admin operations.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "aliceWalletId",
+      "value": "4",
+      "type": "string"
+    },
+    {
+      "key": "bobWalletId",
+      "value": "5",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Obtain JWT Token (Alice)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"alice\",\n  \"password\": \"AlicePassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/token/",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "token", ""]
+            }
+          }
+        },
+        {
+          "name": "Obtain JWT Token (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"AdminPassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/token/",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "token", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Profile (Me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me/",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Wallets",
+      "item": [
+        {
+          "name": "List Wallets",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/wallets/",
+              "host": ["{{baseUrl}}"],
+              "path": ["wallets", ""]
+            }
+          }
+        },
+        {
+          "name": "Create Wallet (USD)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currency\": \"USD\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/wallets/",
+              "host": ["{{baseUrl}}"],
+              "path": ["wallets", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Wallet by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/wallets/{{aliceWalletId}}/",
+              "host": ["{{baseUrl}}"],
+              "path": ["wallets", "{{aliceWalletId}}", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Money Operations",
+      "item": [
+        {
+          "name": "Top-up Wallet",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Idempotency-Key", "value": "postman-topup-001" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": \"1000.00\",\n  \"currency\": \"INR\",\n  \"description\": \"Postman manual topup\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/wallets/{{aliceWalletId}}/topups/",
+              "host": ["{{baseUrl}}"],
+              "path": ["wallets", "{{aliceWalletId}}", "topups", ""]
+            }
+          }
+        },
+        {
+          "name": "P2P Transfer",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Idempotency-Key", "value": "postman-transfer-001" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source_wallet_id\": {{aliceWalletId}},\n  \"destination_wallet_id\": {{bobWalletId}},\n  \"amount\": \"200.00\",\n  \"currency\": \"INR\",\n  \"description\": \"Dinner bill split\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/transfers/",
+              "host": ["{{baseUrl}}"],
+              "path": ["transfers", ""]
+            }
+          }
+        },
+        {
+          "name": "Request Withdrawal",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Idempotency-Key", "value": "postman-wdr-001" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": \"150.00\",\n  \"currency\": \"INR\",\n  \"destination_bank_account\": \"HDFC0001234_9876543210\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/wallets/{{aliceWalletId}}/withdrawals/",
+              "host": ["{{baseUrl}}"],
+              "path": ["wallets", "{{aliceWalletId}}", "withdrawals", ""]
+            }
+          }
+        },
+        {
+          "name": "Query Transaction Statement",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/wallets/{{aliceWalletId}}/transactions/?page=1&page_size=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["wallets", "{{aliceWalletId}}", "transactions", ""],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "page_size", "value": "20" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Administrative Operations",
+      "item": [
+        {
+          "name": "Admin Freeze Wallet",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Compliance security check\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/wallets/{{aliceWalletId}}/freeze/",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "wallets", "{{aliceWalletId}}", "freeze", ""]
+            }
+          }
+        },
+        {
+          "name": "Admin Unfreeze Wallet",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Compliance audit verified\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/wallets/{{aliceWalletId}}/unfreeze/",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "wallets", "{{aliceWalletId}}", "unfreeze", ""]
+            }
+          }
+        },
+        {
+          "name": "Admin Reverse Transfer",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" },
+              { "key": "Idempotency-Key", "value": "postman-rev-001" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Customer accidental transfer\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/transfers/1/reverse/",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "transfers", "1", "reverse", ""]
+            }
+          }
+        },
+        {
+          "name": "Admin View Risk Flags",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/flags/",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "flags", ""]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
